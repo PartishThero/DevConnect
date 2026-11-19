@@ -10,8 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
+@SuppressWarnings("unused")
 @RequestMapping("/api/v1/developers")
 public class DeveloperController {
 
@@ -52,6 +57,12 @@ public class DeveloperController {
 
     @PostMapping
     public Developer addDeveloper(@RequestBody Developer developer) {
+
+        for (Developer existingdeveloper : developers.values()){
+            if (existingdeveloper.getEmail().equals(developer.getEmail()) || existingdeveloper.getPhoneNumber().equals(developer.getPhoneNumber())){
+                return developer;
+            }
+        }
         developer.setId(idCounter.getAndIncrement());
         developers.put(developer.getId(), developer);
         return developer;
@@ -64,5 +75,18 @@ public class DeveloperController {
 //        developers.put(developer.getId(), developer);
 //        return ResponseEntity.status(HttpStatus.CREATED).build();
 //    }
+
+@PutMapping("/{id}")
+public Developer replaceDeveloper(@PathVariable Long id, @RequestBody Developer developer) {
+    if (!developers.containsKey(id)){
+        return new Developer();
+    }
+
+    developers.remove(id);
+    developer.setId(id);
+    developers.put(id, developer);
+
+    return developer;
+}
 
 }

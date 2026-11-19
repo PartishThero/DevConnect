@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+@SuppressWarnings("unused")
 public class HealthController {
 
     @GetMapping("/health")
